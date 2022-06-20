@@ -8,9 +8,7 @@
 #e4e7ea light gray  background
 
 */
-  {
-  % load static%
-}
+
 
 .rr {
   width: 128px;
@@ -141,7 +139,7 @@ body {
   left: 128px;
   width: 32px;
   height: 32px;
-  /* background: url('sprites2.png ');
+
 background-position: -52px -68px; */
   animation-duration: .4s;
 }
