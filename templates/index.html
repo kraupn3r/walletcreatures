@@ -719,7 +719,7 @@ self.aboutarray = []
             .then(data => {
               window.data = data;
               self.map = data
-              self.currentlocation = self.map.locations[0]
+              self.currentlocation = self.map.locations.find(x => x.name === 'My Room')
               self.map.locations.forEach((k, i) => {
                 k.npcs.forEach((item, j) => {
                   item.pose = item.startposex
