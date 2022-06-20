@@ -11,6 +11,7 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 if os.getenv("ENV") == "Heroku":
+    print('prodsettings enabled')
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'walletcreatures.prodsettings')
 else:
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'walletcreatures.settings')
