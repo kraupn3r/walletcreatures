@@ -10,7 +10,9 @@ https://docs.djangoproject.com/en/4.0/howto/deployment/wsgi/
 import os
 
 from django.core.wsgi import get_wsgi_application
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'walletcreatures.settings')
+if os.getenv("ENV") == "Heroku":
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'walletcreatures.prodsettings')
+else:
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'walletcreatures.settings')
 
 application = get_wsgi_application()
