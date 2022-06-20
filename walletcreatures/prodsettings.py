@@ -2,7 +2,8 @@
 import os
 # import dj_database_url
 from .settings import *
-
+import environ
+env = environ.Env()
 DEBUG = False
 DATABASES = {
     'default': {
