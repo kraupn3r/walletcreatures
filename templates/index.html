@@ -1,0 +1,758 @@
+{% load static %}
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bigfonts.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/tile.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/chars.css' %}">
+  <title>TramWay</title>
+</head>
+
+<body>
+  <div id="apps">
+    <routeshow></routeshow>
+  </div>
+</body>
+
+<script type="text/javascript">
+  Vue.component('routeshow', {
+    delimiters: ['{(', ')}'],
+    data: () => {
+      return {
+        canvastopleft: [32, 32],
+        poxy: [4, 4],
+        tileset: null,
+        keyCode: null,
+        keyDown: false,
+        currentlocation: null,
+        mode: 0,
+        map: null,
+        npc_interv: [],
+        testnpcs: [],
+        mainchar: null,
+        printarray: [],
+        aboutarray: [],
+        menuarray: [60,65,98,111,117,116,32,77,101,32,82,101,115,117,109,101,32,32,32,71,105,116,104,117,98,32,32,32,67,111,110,116,97,99,116,32,32,81,117,105,116],
+        fontbool: false,
+        aboutbool: false,
+        menubool: false,
+        aboutlock: false,
+        menuinterval: null,
+        seen: false,
+        int:null,
+        chose: 0,
+        lastchose: 0,
+        somflag: true,
+        printbackground: ["dialogTLC", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS","dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogTRC", "dialogVS",
+          "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty","dialogempty","dialogempty", "dialogempty","dialogempty",  "dialogempty", "dialogempty", "dialogempty", "dialogempty",  "dialogVS", "dialogVS", "dialogempty",
+          "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty","dialogempty","dialogempty","dialogempty",  "dialogempty", "dialogempty", "dialogempty",  "dialogVS", "dialogBLC", "dialogHS", "dialogHS",
+          "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS","dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogBRC"
+        ],
+        printmenu: ["dialogTLC", "dialogHS", "dialogHS","dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogTRC",
+         "dialogVS", "dialogempty","dialogempty",  "dialogempty",  "dialogempty",  "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty",  "dialogVS",
+                  "dialogVS", "dialogempty","dialogempty",  "dialogempty",  "dialogempty", "dialogempty",  "dialogempty", "dialogempty", "dialogempty", "dialogempty",  "dialogVS",
+                           "dialogVS", "dialogempty","dialogempty",  "dialogempty",  "dialogempty", "dialogempty",  "dialogempty", "dialogempty", "dialogempty", "dialogempty",  "dialogVS",
+                                    "dialogVS", "dialogempty","dialogempty",  "dialogempty",   "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty",  "dialogVS",
+                                             "dialogVS", "dialogempty","dialogempty",  "dialogempty",  "dialogempty", "dialogempty",  "dialogempty", "dialogempty", "dialogempty", "dialogempty",  "dialogVS",
+          "dialogVS", "dialogempty","dialogempty","dialogempty" , "dialogempty",  "dialogempty", "dialogempty",  "dialogempty", "dialogempty", "dialogempty",  "dialogVS",
+       "dialogBLC", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogBRC"
+        ],
+      printabout: ["dialogTLC", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS","dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogTRC", "dialogVS",
+        "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty","dialogempty","dialogempty", "dialogempty","dialogempty",  "dialogempty", "dialogempty", "dialogempty", "dialogempty",  "dialogVS", "dialogVS",
+          "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty","dialogempty","dialogempty", "dialogempty","dialogempty",  "dialogempty", "dialogempty", "dialogempty", "dialogempty",  "dialogVS", "dialogVS",
+            "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty","dialogempty","dialogempty", "dialogempty","dialogempty",  "dialogempty", "dialogempty", "dialogempty", "dialogempty",  "dialogVS", "dialogVS",
+              "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty","dialogempty","dialogempty", "dialogempty","dialogempty",  "dialogempty", "dialogempty", "dialogempty", "dialogempty",  "dialogVS", "dialogVS",
+                "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty","dialogempty","dialogempty", "dialogempty","dialogempty",  "dialogempty", "dialogempty", "dialogempty", "dialogempty",  "dialogVS", "dialogVS",
+                  "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty","dialogempty","dialogempty", "dialogempty","dialogempty",  "dialogempty", "dialogempty", "dialogempty", "dialogempty",  "dialogVS", "dialogVS",
+                    "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty","dialogempty","dialogempty", "dialogempty","dialogempty",  "dialogempty", "dialogempty", "dialogempty", "dialogempty",  "dialogVS", "dialogVS",
+                      "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty","dialogempty","dialogempty", "dialogempty","dialogempty",  "dialogempty", "dialogempty", "dialogempty", "dialogempty",  "dialogVS", "dialogVS",
+                        "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty","dialogempty","dialogempty", "dialogempty","dialogempty",  "dialogempty", "dialogempty", "dialogempty", "dialogempty",  "dialogVS", "dialogVS",
+                          "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty","dialogempty","dialogempty", "dialogempty","dialogempty",  "dialogempty", "dialogempty", "dialogempty", "dialogempty",  "dialogVS", "dialogVS",
+                            "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty","dialogempty","dialogempty", "dialogempty","dialogempty",  "dialogempty", "dialogempty", "dialogempty", "dialogempty",  "dialogVS", "dialogVS", "dialogempty",
+        "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty", "dialogempty","dialogempty","dialogempty","dialogempty",  "dialogempty", "dialogempty", "dialogempty",  "dialogVS", "dialogBLC", "dialogHS", "dialogHS",
+        "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS", "dialogHS","dialogHS", "dialogHS", "dialogHS", "dialogBRC"
+      ]
+    }
+    },
+    template:
+
+      `
+      <div>
+        <div id="base">
+          <table id="tiles" :style="{'top':canvastopleft[0]+'px','left':canvastopleft[1] + 'px'}">
+            <tr v-for="row in tileset">
+              <td v-for="tile in row">
+                <div v-if="tile[1] == 1952 && tile[0] == 48" class="tile floweranim2" > </div>
+                <div v-else-if="tile[1] == 1936 && tile[0] == 16" class="tile wateranim" ></div>
+                <div v-else :class="'tile tile'+tile[0]+'_'+tile[1]" > </div>
+              </td>
+            </tr>
+          </table>
+          <div v-if="testnpcs.length > 0" id="ppl" :style="{'top': canvastopleft[0] +'px','left':canvastopleft[1] + 'px'}">
+            <div v-for="npc in testnpcs" v-bind:id="npc.name + 'Icon'" :class="npc.name + npc.pose" v-bind:style="{ 'top': npc.topleft[0] + 'px','left':npc.topleft[1] + 'px' }"></div>
+          </div>
+          <div class="cover">
+          <div id="pressme" @click="menuloop()" :style="{'top': canvastopleft[0]-5 +'px','left':canvastopleft[1]-5 + 'px'}"></div>
+
+            <div id="starticon" class="mainchardown" ></div>
+            <div v-if="fontbool == true" class="textspace"><div v-for="item in printbackground" :class="'fontke '+item"></div><div class="textspace-over"><div v-for="item in printarray" :class="'fontke font'+item"></div></div></div>
+            <div v-if="aboutbool == true" class="aboutspace"><div v-for="item in printabout" :class="'fontke '+item"></div><div class="about-over"><img id="ava" class="clearfix" src="{% static 'mac.png' %}"><div v-for="item in aboutarray" :class="'fontke font'+item + ' smolfont'"></div></div></div>
+              <div v-if="menubool == true" class="menuspace"><div v-for="item in printmenu" :class="'fontke '+item"></div><div class="menu-over"><div v-for="item in menuarray" :class="'fontke font'+item"></div></div>
+              <div class="menuclicks">
+              <div @click="menuaboutme()" class="menuclick aboutme"><div class="fontke font62 baby"></div></div>
+              <div @click="menuresume()" class="menuclick resume"><div class="fontke font62 baby"></div></div>
+              <div @click="menugithub()" class="menuclick github"><div class="fontke font62 baby"></div></div>
+              <div @click="menucontact()" class="menuclick contact"><div class="fontke font62 baby"></div></div>
+              <div @click="menuquit()" class="menuclick quit"><div class="fontke font62 baby"></div></div></div></div>
+          </div>
+          <div id="moves">
+          <div id="arrow-up" class="arrow arrow-up" @mousedown="kpress(38)" @touchstart="kpress(38)" @touchend="kunpress()" @mouseup="kunpress()"></div>
+          <div class="testo">
+          <div id="arrow-left" class="arrow arrow-left" @touchstart="kpress(37)" @touchend="kunpress()" @mousedown="kpress(37)" @mouseup="kunpress()"></div>
+          <div id="arrow-right" class="arrow arrow-right"@touchstart="kpress(39)" @touchend="kunpress()" @mousedown="kpress(39)" @mouseup="kunpress()"></div></div>
+          <div class="xbut"  @mousedown="kpress(88)" @mouseup="kunpress()"></div>
+          <div id="arrow-down" class="arrow arrow-down" @touchstart="kpress(40)" @touchend="kunpress()" @mousedown="kpress(40)" @mouseup="kunpress()"></div>
+          </div>
+        </div>
+      </div>
+  `,
+    mounted() {
+      var self = this
+      var root = document.documentElement;
+root.style.setProperty('zoom', (window.innerHeight/600).toFixed(2))
+window.addEventListener('resize', () => {
+root.style.setProperty('zoom', (window.innerHeight/600).toFixed(2))
+})
+      document.addEventListener('visibilitychange', self.checkTabFocused)
+      self.GetMap()
+      self.mainchar = document.getElementById('starticon')
+
+      document.addEventListener("keydown", (event) => {
+        self.keyCode = event.keyCode
+        self.keyDown = true
+      });
+      setInterval(function() {
+        if (self.mode == 0) {
+          if (self.keyDown == true) {
+            self.keyDown = false
+
+            if (self.keyCode == 88) {
+              let v = self.nextblock(self.mainchar.className, self.poxy)
+              if (v[0][2] != 0) {
+                self.currentlocation.events.every(el => {
+                  if (el.id == v[0][2][1]) {
+                    if(el.type == "1"){
+                    self.fontbool = true
+                    self.setmodetoprint(el.text)}
+                    if(el.id == 7){
+                      self.menuloop();
+                    }
+                    return false
+                  }
+                  return true
+                })
+              }
+              if (v[1] == true) {
+                self.npc_interv.forEach((item, i) => {
+                  if (v[2].name == item[0]) {
+                    clearInterval(item[1])
+                    self.npc_interv.splice(i, 1)}})
+                    if (self.mainchar.className.includes('up')) {
+                      v[2].pose = 'down'
+                    } else if (self.mainchar.className.includes('right')) {
+                      v[2].pose = 'left'
+                    } else if (self.mainchar.className.includes('down')) {
+                      v[2].pose = 'up'
+                    } else if (self.mainchar.className.includes('left')) {
+                      v[2].pose = 'right'
+                    }
+
+
+                  setTimeout(function() {
+                    self.moveNPC(v[2])
+                  }, 10500)
+
+                self.fontbool = true
+                self.setmodetoprint(v[2].dialog)
+
+              }
+            }
+            if (self.keyCode == 40) {
+
+              let v = self.nextblock('down', self.poxy)
+              self.warpcheck(v[0], self.mainchar)
+              v = self.nextblock('down', self.poxy)
+              if (v[0][3] != 1 && v[1] == false && v[0][2][0] != 2) {
+                let x = self.movedown(self.poxy, self.mainchar, 'mainchar')
+                Vue.set(self.canvastopleft, 0, self.canvastopleft[0] + x[0][0])
+              }else {
+                self.mainchar.className = 'mainchardown'
+              }
+            } else if (self.keyCode == 39) {
+
+              let v = self.nextblock('right', self.poxy)
+              self.warpcheck(v[0], self.mainchar)
+          v = self.nextblock('right', self.poxy)
+                if (v[0][3] != 1 && v[1] == false && v[0][2][0] != 2) {
+                  let x = self.moveright(self.poxy, self.mainchar, 'mainchar')
+                  Vue.set(self.canvastopleft, 1, self.canvastopleft[1] + x[0][1])
+              }else {
+                self.mainchar.className = 'maincharright'
+              }
+            } else if (self.keyCode == 38) {
+
+              let v = self.nextblock('up', self.poxy)
+              self.warpcheck(v[0], self.mainchar)
+          v = self.nextblock('up', self.poxy)
+              if (v[0][3] != 1 && v[1] == false && v[0][2][0] != 2 && v[0][2][0] != 4) {
+                let x = self.moveup(self.poxy, self.mainchar, 'mainchar')
+                Vue.set(self.canvastopleft, 0, self.canvastopleft[0] + x[0][0])
+              } else{
+                self.mainchar.className = 'maincharup'
+              }
+            } else if (self.keyCode == 37) {
+              let v = self.nextblock('left', self.poxy)
+              self.warpcheck(v[0], self.mainchar)
+              v = self.nextblock('left', self.poxy)
+              if (v[0][3] != 1 && v[1] == false && v[0][2][0] != 2) {
+                let x = self.moveleft(self.poxy, self.mainchar, 'mainchar')
+                Vue.set(self.canvastopleft, 1, self.canvastopleft[1] + x[0][1])
+              } else{
+                self.mainchar.className = 'maincharleft'
+              }
+            }
+          }
+        }
+      }, 400)
+    },
+    methods: {
+      checkTabFocused: function() {
+        if (document.visibilityState === 'visible') {
+          setTimeout(()=>{
+            self.testnpcs.forEach((item, i) => {
+              document.getElementById(item.name + 'Icon').style.transitionDuration = '.8s'
+              document.getElementById(item.name + 'Icon').style.animationDuration = '1s'
+            })}, 500);
+        } else {
+          self.testnpcs.forEach((item, i) => {
+            document.getElementById(item.name + 'Icon').style.setProperty('transition-duration','0.1s')
+            document.getElementById(item.name + 'Icon').style.setProperty('animation-duration','0.1s')
+          });
+        }
+      },
+      moveNPC: function(npc) {
+        let poxy = npc.poxy;
+        let pose = npc.pose;
+        let id = npc.name;
+        let animset = npc.animset;
+        let topleft = npc.topleft;
+        let type = npc.type;
+        if (type != '2') {
+          self.npc_interv.push([id, setInterval(function() {
+            var elementg = document.getElementById(id + 'Icon')
+            let randval = Math.floor(Math.random() * 6);
+            console.log(elementg, randval)
+            if (randval == 0) {
+
+              npc.pose =  'down'
+              if (type == '1'){
+              var v = self.nextblock(npc.pose, poxy)
+
+              if (poxy[0] != self.poxy[0] | poxy[1] + 1 != self.poxy[1]) {
+                if (v[0][3] != 1 && v[0][2][0] == 0 && v[1] == false) {
+                  let x = self.movedownNPC(poxy, elementg, id)
+                  Vue.set(topleft, 0, topleft[0] - x[0][0])
+                }
+              }}
+            } else if (randval == 1) {
+              npc.pose = 'right'
+              if (type == '1'){
+              var v = self.nextblock(npc.pose, poxy)
+
+              if (poxy[0] + 1 != self.poxy[0] | poxy[1] != self.poxy[1]) {
+                if (v[0][3] != 1 && v[0][2][0] == 0 && v[1] == false ) {
+                  let x = self.moveright(poxy, elementg, id)
+                  Vue.set(topleft, 1, topleft[1] - x[0][1])
+                }
+              }}
+            } else if (randval == 2) {
+              npc.pose = 'up'
+              if (type == '1'){
+              var v = self.nextblock(npc.pose, poxy)
+
+              if (poxy[0] != self.poxy[0] | poxy[1] - 1 != self.poxy[1]) {
+                if (v[0][3] != 1 && v[0][2][0] == 0 && v[1] == false) {
+                  let x = self.moveupNPC(poxy, elementg, id)
+                  Vue.set(topleft, 0, topleft[0] - x[0][0])
+                }
+              }}
+            } else if (randval == 3) {
+              npc.pose = 'left'
+              if (type == '1'){
+              var v = self.nextblock(npc.pose, poxy)
+
+              if (poxy[0] - 1 != self.poxy[0] | poxy[1] != self.poxy[1]) {
+                if (v[0][3] != 1 && v[0][2][0] == 0 && v[1] == false) {
+                  let x = self.moveleft(poxy, elementg, id)
+                  Vue.set(topleft, 1, topleft[1] - x[0][1])
+                }
+              }}
+            } else { //pass
+            }
+          }, 4000 + Math.floor(Math.random() * 5) * 200)])
+        } else {
+          // self.npc_interv.push([id, setInterval(function() {}, 10000)])
+        }
+      },
+      kpress: function(kcode){
+clearInterval(self.int)
+        var e = new KeyboardEvent("keydown", {
+bubbles : true,
+cancelable : true,
+char : "",
+keyCode : kcode
+});
+document.dispatchEvent(e);
+self.int = setInterval(function(){document.dispatchEvent(e);},404)
+
+          // self.keyDown = false
+},
+kunpress: function(){
+  clearInterval(self.int)
+},
+      warpcheck: function(v, element) {
+        if(v[2][0] == 4){
+
+
+         self.fontbool = true
+         self.setmodetoprint("Nope")
+
+     }
+
+        else if (v[2][0] == 2) {
+          if (self.seen == false){
+            self.fontbool = true
+            self.setmodetoprint("First, lets look into my PC")
+
+          }else{
+          self.currentlocation.events.every(k => {
+            if (v[2][0] == 2 && k.id == v[2][1]) {
+              self.map.locations.every(m => {
+                if (m.id == k.warpto) {
+                  document.getElementById('base').className = 'bodywarp';
+                  setTimeout(() => {
+                    document.getElementById('base').className = null
+                  },1000)
+                  setTimeout(()=>{
+                  self.currentlocation = m
+                  self.setNPCS()
+
+                  self.poxy = [k.warpx, k.warpy]
+
+                  self.canvastopleft[0] = -32 * (k.warpy - 5)
+                  self.canvastopleft[1] = -32 * (k.warpx - 5)
+                },300)
+                  // if (k.warpor == '1') {
+                  //   self.pos1 = -154;
+                  // } else if (k.warpor == '2') {
+                  //   self.pos1 = -290;
+                  // } else if (k.warpor == '3') {
+                  //   self.pos1 = -52;
+                  // } else if (k.warpor == '4') {
+                  //   self.pos1 = -222;
+                  // }
+                  return false
+                }
+                return true
+              })
+              return false
+            }
+            return true
+          })
+          return true
+        }} else {
+          return false
+        }
+      },
+      setNPCS: function() {
+        self.npc_interv.forEach(v => {
+          clearInterval(v[1])
+
+        });
+        self.npc_interv = []
+        self.testnpcs = []
+        if (self.currentlocation.npcs.length > 0) {
+          self.currentlocation.npcs.forEach((testnpc, i) => {
+            obj = JSON.parse(JSON.stringify(testnpc))
+            self.testnpcs.push(obj)
+          })
+          self.testnpcs.forEach((testnpc, i) => {
+            self.moveNPC(testnpc)
+          });
+        }
+      },
+      breakString: function(text) {
+        let outarr = []
+        let chararr = []
+        let broken = text.split(' ')
+        let workstr = ''
+        broken.forEach((item, i) => {
+          if (workstr.length > 16) {
+            if ((workstr.length + item.length) > 30) {
+              while (workstr.length != 31) {
+                workstr += ' '
+              }
+              workstr += '^'
+              outarr.push(workstr)
+              workstr = item + ' '
+            } else {
+              workstr += item + " "
+            }
+          } else {
+            if ((workstr.length + item.length) < 17) {
+              workstr += item
+              if (workstr.length == 16){}
+              else { workstr += ' '}
+            } else {
+              while (workstr.length != 16) {
+                workstr += ' '
+              }
+              workstr += item + ' '
+            }
+          }
+        })
+        while (workstr.length != 31) {
+          workstr += ' '
+        }
+        workstr += '^'
+        outarr.push(workstr)
+        outarr.forEach((item, i) => {
+          let arr = []
+          let chars = item.split('')
+          chars.forEach((v, j) => {
+            arr.push(v.charCodeAt())
+          });
+          chararr.push(arr)
+        });
+        return chararr
+
+      },
+
+      setmodetoprint: function(text) {
+        self.mode = 1
+        let jj = 0
+        let topush = self.breakString(text)
+        self.somflag = true
+        self.printarray = []
+
+        self.printchars(topush[jj])
+
+        setTimeout(function() {
+
+          var listener = document.addEventListener("keydown", handle)
+        }, 1600)
+
+        function handle(event) {
+          if (event.keyCode == 88 && self.somflag == true && self.mode == 1) {
+
+            self.somflag = false
+            self.printarray = []
+            jj += 1
+            if (jj != topush.length) {
+              self.printchars(topush[jj])
+            } else {
+
+
+              self.fontbool = false
+              document.removeEventListener("keydown", handle)
+              self.keyDown = false
+              self.mode = 0
+            }
+            setTimeout(function() {
+
+              self.somflag = true
+            }, 1600)
+          }
+        }
+      },
+      printchars: function(chrarr) {
+
+        // console.log(chrarr)
+        chrarr.forEach((item, i) => {
+          setTimeout(function() {
+            self.printarray.push(item)
+          }, 50 * i)
+        })
+      },
+      menuquit:function(){
+        self.menubool = false;
+        self.mode = 0;
+        self.seen = true;
+        clearInterval(self.menuinterval)
+        document.getElementById('pressme').style.display = "block";
+    self.chose = 4  },
+      menucontact: function(){
+      window.location.href = "mailto:marek.pyzowski@gmail.com";
+  self.chose = 3  },
+    menuresume: function(){
+      window.open("{% static 'CV - Marek Pyzowski.pdf' %}");
+  self.chose =  1 },
+    menugithub: function(){
+      window.open("http://github.com/kraupn3r?tab=repositories", '_blank').focus();
+  self.chose =  2 },
+    menuaboutme: function(){
+
+        if (self.menubool == true){
+          self.menubool = false;
+
+        self.aboutbool = true;
+        self.aboutlock = true;
+        setTimeout(()=>{
+          self.aboutlock = false;
+        },3000)
+        self.printaboutchars();
+      }else if (self.aboutlock == false) {
+        self.menubool = true;
+        self.aboutarray == [];
+      self.aboutbool = false;
+      }
+    self.chose = 0},
+      menuloop: function(){
+        self.mode = 3
+        self.menubool = true;
+        document.getElementById('pressme').style.display = "none";
+
+        self.chose = 0;
+        self.lastchose = 0;
+
+        self.menuinterval = setInterval(function() {
+          if (self.mode == 3) {
+            if (self.keyDown == true) {
+              self.keyDown = false
+
+              if (self.keyCode == 88 || self.keyCode == 13 || self.keyCode == 32) {
+                if (self.chose == 4){
+                  self.menuquit();
+
+
+                } else if (self.chose == 3){
+self.menucontact();
+
+                }else if (self.chose == 1){
+                  self.menuresume();
+
+                } else if (self.chose == 2){
+                  self.menugithub();
+
+                }else if (self.chose == 0){
+                  self.menuaboutme();
+
+                }
+              }
+              if (self.keyCode == 40 && self.chose < 4) {
+
+              self.chose += 1
+            } else if (self.keyCode == 38 && self.chose > 0) {
+
+              self.chose -= 1
+                }
+
+              }
+
+
+
+      }self.keyDown = false } , 100)
+
+    },
+      printaboutchars: function() {
+self.aboutarray = []
+            let aboutstr = "Marek Pyzowski      Software Developer                      Location: Warsaw    Nature: Motivated   Ability: Selfthaught % Young and dynamic person,constantly challenging    himself. due to his ever  changing interests.                                 Skills: Python(Django),   JS(Vue.js), SQL, GIT,     Docker, Design Patterns,  Adobe and MS suites                                 Work under pressure:  ABLERelocate:             ABLEWork irregular hours: ABLE                                                                            ^"
+        aboutstr.split('').forEach((item, i) => {
+          setTimeout(function() {
+            self.aboutarray.push(item.charCodeAt())
+          }, 5 * i)
+        })
+      },
+
+      nextblock: function(pos, posxy) {
+        var nextblocks = []
+        let flag = false
+        let obj = null
+
+        if (pos.includes('down')) {
+          nextblocks.push(self.tileset[posxy[1] * 2 + 2][posxy[0] * 2])
+          self.testnpcs.forEach((item, i) => {
+            if (item.poxy[0] == posxy[0] && item.poxy[1] == posxy[1] + 1 ) {
+              flag = true
+              obj = item
+            }
+          })
+        } else if (pos.includes('right')) {
+          nextblocks.push(self.tileset[posxy[1] * 2][posxy[0] * 2 + 2])
+          self.testnpcs.forEach((item, i) => {
+            if (item.poxy[0] == posxy[0] + 1 && item.poxy[1] == posxy[1]) {
+              flag = true
+              obj = item
+            }
+          })
+        } else if (pos.includes('up')) {
+          nextblocks.push(self.tileset[posxy[1] * 2 - 1][posxy[0] * 2])
+          self.testnpcs.forEach((item, i) => {
+            if (item.poxy[0] == posxy[0] && item.poxy[1] == posxy[1] - 1) {
+              flag = true
+              obj = item
+            }
+          })
+        } else if (pos.includes('left')) {
+          nextblocks.push(self.tileset[posxy[1] * 2][posxy[0] * 2 - 2])
+          self.testnpcs.forEach((item, i) => {
+            if (item.poxy[0] == posxy[0] - 1 && item.poxy[1] == posxy[1]) {
+              flag = true
+              obj = item
+            }
+          })
+        }
+        nextblocks.push(flag)
+        nextblocks.push(obj)
+        return nextblocks
+      },
+      movedown: function(posxy, element, animset) {
+
+        Vue.set(posxy, 1, posxy[1] + 1);
+        posarr = [posxy[0], posxy[1] + 1]
+        arr = [-32, 0];
+
+        if ((element.classList.contains('downalt'))) {
+          element.className = animset + 'downstep2'
+          setTimeout(function() {
+            element.className = animset + 'down'
+          }, 300);
+        } else {
+          element.className = animset + 'downstep1'
+          setTimeout(function() {
+            element.className = 'downalt ' + animset + 'down'
+          }, 300);
+        }
+        return [arr, posarr]
+      },
+      movedownNPC: function(posxy, element, animset) {
+
+        Vue.set(posxy, 1, posxy[1] + 1);
+        posarr = [posxy[0], posxy[1] + 1]
+        arr = [-32, 0];
+
+          element.className = animset + 'downstep2'
+          setTimeout(function() {
+            element.className = animset + 'downstep1'
+          }, 250);
+          setTimeout(function() {
+            element.className = animset + 'down'
+          }, 500);
+
+
+        return [arr, posarr]
+      },
+      moveright: function(posxy, element, animset) {
+        arr = [0, -32];
+        Vue.set(posxy, 0, posxy[0] + 1);
+        posarr = [posxy[0] + 1, posxy[1]]
+        element.className = animset + 'rightstep'
+        setTimeout(function() {
+          element.className = animset + 'right'
+        }, 300);
+        return [arr, posarr]
+      },
+      moveleft: function(posxy, element, animset) {
+        arr = [0, 32];
+        Vue.set(posxy, 0, posxy[0] - 1);
+        posarr = [posxy[0] - 1, posxy[1]]
+        element.className = animset + 'leftstep'
+        setTimeout(function() {
+          element.className = animset + 'left'
+        }, 300);
+        return [arr, posarr]
+      },
+      moveup: function(posxy, element, animset) {
+        arr = [32, 0];
+        Vue.set(posxy, 1, posxy[1] - 1);
+        posarr = [posxy[0], posxy[1] - 1]
+
+        if (element.className.includes( animset + 'upalt')) {
+
+          element.className = animset + 'upstep2'
+          setTimeout(function() {
+            element.className = animset + 'up'
+          }, 300);
+        } else {
+          element.className = animset + 'upstep1'
+          setTimeout(function() {
+            element.className = animset + 'upalt'
+          }, 300);
+        }
+        return [arr, posarr]
+      },
+      moveupNPC: function(posxy, element, animset) {
+        arr = [32, 0];
+        Vue.set(posxy, 1, posxy[1] - 1);
+        posarr = [posxy[0], posxy[1] - 1]
+
+
+          element.className = animset + 'upstep2'
+          setTimeout(function() {
+            element.className =  animset + 'upstep1'
+          }, 250);
+          setTimeout(function() {
+            element.className = animset + 'up'
+          }, 500);
+        return [arr, posarr]
+      },
+      GetMap: function() {
+        self = this
+        fetch('/api/maps/')
+          .then(response => response.json()
+            .then(data => {
+              window.data = data;
+              self.map = data
+              self.currentlocation = self.map.locations[0]
+              self.map.locations.forEach((k, i) => {
+                k.npcs.forEach((item, j) => {
+                  item.pose = item.startposex
+                });
+              });
+              self.tileset = self.currentlocation.tileorder
+            }))
+        return window.data
+      },
+    },
+    watch: {
+      chose(){
+        if (self.chose != self.lastchose){
+          Vue.set(self.menuarray, 0, 32)
+          Vue.set(self.menuarray, 9, 32)
+          Vue.set(self.menuarray, 18, 32)
+          Vue.set(self.menuarray, 27, 32)
+          Vue.set(self.menuarray, 36, 32)
+          Vue.set(self.menuarray, self.chose*9, 60)
+
+
+      self.lastchose = self.chose
+    }},
+      currentlocation() {
+        self.tileset = self.currentlocation.tileorder
+      },
+    }
+  })
+
+
+  new Vue({
+    el: '#apps'
+  });
+</script>
+
+</html>

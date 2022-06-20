@@ -1,0 +1,13 @@
+version: '3.3'
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: docker/BackendDockerfile
+    container_name: walletcreatures-backend
+    command: ./docker/backend_setup.sh
+    volumes:
+      - .:/app
+    ports:
+      - "8080:8080"
