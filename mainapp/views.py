@@ -14,8 +14,6 @@ class SearchView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        loc = Location.objects.get(pk=30)
-        events = Event.objects.get(pk=1)
         context['fromlist'] = loc.tileorder
         context['evs'] = loc.pk
 
