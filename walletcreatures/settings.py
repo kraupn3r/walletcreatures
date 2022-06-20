@@ -76,7 +76,8 @@ WSGI_APPLICATION = 'walletcreatures.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
+if os.getenv("ENV") != "Heroku":
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'walletcreatures.settings')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
