@@ -7,3 +7,4 @@ sqlparse==0.4.2
 tzdata==2022.1
 psycopg2-binary>=2.8
 django-environ>=0.4.5
+whitenoise>=4.0
