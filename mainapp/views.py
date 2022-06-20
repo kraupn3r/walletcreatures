@@ -12,13 +12,6 @@ from .models import Location,Event
 class SearchView(TemplateView):
     template_name = "index.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['fromlist'] = loc.tileorder
-        context['evs'] = loc.pk
-
-    #
-        return context
     # def get(self, request, *args, **kwargs):
     #     if 'fromlist' not in request.session:
     #         request.session['fromlist'] = []
