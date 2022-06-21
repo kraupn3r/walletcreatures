@@ -1,5 +1,11 @@
 # Wallet Creatures Django project
-This project is a Portfolio stylized as a gameboy game.
+This project is a portfolio stylized as a Gameboy game.
+
+Preview:
+
+'''
+https://walletcreatures.herokuapp.com
+'''
 
 
 Requirements:
