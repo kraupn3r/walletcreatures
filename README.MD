@@ -3,9 +3,8 @@ This project is a portfolio stylized as a Gameboy game.
 
 Preview:
 
-'''
 https://walletcreatures.herokuapp.com
-'''
+
 
 
 Requirements:
